@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google title for hide chat page -->
+    <title>Google</title>
+    <link href="/v0/images/google_icon.png" rel="icon">
+    <style>
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #000000;
+            color: #000000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        h1 {
+            text-align: center;
+            color: #d6d6d6;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+        }
+        #chat {
+            flex: 1;
+            background: #000000;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            height: 60vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            border: 1px solid #555555;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.6;
+        }
+        #chat::-webkit-scrollbar {
+            width: 8px;
+        }
+        #chat::-webkit-scrollbar-track {
+            background: #0f0f0f;
+            border-radius: 10px;
+        }
+        #chat::-webkit-scrollbar-thumb {
+            background: #0f0f0f;
+            border-radius: 10px;
+        }
+        .auth-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .auth-container input {
+            padding: 14px 18px;
+            font-size: 16px;
+            background: #0f0f0f;
+            border: none;
+            border-radius: 12px;
+            color: #e0e0e0;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .auth-container input:focus {
+            background: #363636;
+            box-shadow: 0 0 0 3px rgba(122, 122, 122, 0.3);
+        }
+        .input-container {
+            display: flex;
+            gap: 12px;
+            padding: 15px;
+            background: #000000;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            border: 1px solid #151516;
+        }
+        #textInput {
+            flex: 1;
+            padding: 14px 18px;
+            font-size: 16px;
+            background: #0f0f0f;
+            border: none;
+            border-radius: 12px;
+            color: #e0e0e0;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        #textInput:focus {
+            background: #141414;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+        }
+        button {
+            padding: 14px 28px;
+            background: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.4);
+        }
+        button:hover {
+            background: #a1a1a1;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .links a {
+            color: #6e6e6e;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .links a:hover {
+            color: #d3d3d3;
+            text-decoration: underline;
+        }
+        
+        .message-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            max-width: 85%;
+        }
+        
+        .message-bubble {
+            flex: 1;
+            padding: 12px 16px;
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            border-left: 4px solid #c2c2c2;
+            min-width: 0;
+            word-break: break-word;
+        }
+        
+        .message-bubble.unverified {
+            border-left-color: #212020;
+        }
+        
+        .message-header {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+        
+        .user-name {
+            font-weight: bold;
+            color: #ffffff;
+            margin-right: 8px;
+        }
+        
+        .verified-badge {
+            color: #fdfdfd;
+            margin-right: 8px;
+        }
+        
+        .message-time {
+            color: #aaaaaa;
+            font-size: 0.8em;
+        }
+        
+        .message-text {
+            color: #e0e0e0;
+            margin: 0;
+            line-height: 1.5;
+        }
+        
+        .copy-button {
+            margin-left: 12px;
+            padding: 6px 12px;
+            background: #2a2a2a;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            box-shadow: none;
+        }
+        
+        .copy-button:hover {
+            background: #3a3a3a;
+            transform: translateY(-1px);
+        }
+        
+        .copy-button:active {
+            transform: translateY(0);
+        }
+        
+        .copy-button:disabled {
+            background: #1a5c1a;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1>School chat server - V1.0.0</h1>
+    <div id="chat"></div>
+    <div class="auth-container">
+        <input type="text" id="loginInput" placeholder="Login" autocomplete="username">
+        <input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password">
+    </div>
+    <div class="input-container">
+        <input type="text" id="textInput" placeholder="message..." autocomplete="off">
+        <button onclick="sendText()">send</button>
+    </div>
+    <div class="links">
+        <a href="https://github.com/serbekun/school-chat-server">Github</a>
+        <a href="/v0/page/verification_text">Acount Verification</a>
+        <a href="/v0/page/create_user">Create Acount</a>
+    </div>
+
+    <script>
+        const chatDiv = document.getElementById("chat");
+        const input = document.getElementById("textInput");
+        const loginInput = document.getElementById("loginInput");
+        const passwordInput = document.getElementById("passwordInput");
+
+        function getCookie(name) {
+            const cookies = document.cookie.split('; ');
+            for (let cookie of cookies) {
+                const [key, value] = cookie.split('=');
+                if (key === name) return decodeURIComponent(value);
+            }
+            return null;
+        }
+
+        function getCredentials() {
+            const login = loginInput.value.trim();
+            const password = passwordInput.value;
+            if (!login || !password) {
+                alert("you don't mistake login and password?");
+                return null;
+            }
+            return { login, password };
+        }
+
+        function sendText() {
+            const text = input.value.trim();
+            if (!text) return;
+
+            const creds = getCredentials();
+            if (!creds) return;
+
+            const userId = getCookie("id") || "";
+
+            fetch("/v0/api/send_chat_message", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    login: creds.login,
+                    password: creds.password,
+                    id: userId,
+                    text: text
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    input.value = "";
+                } else {
+                    let msg = data.message || "Unknown Error";
+                    if (data.exitCode === 1) msg = "Access Denied: Not Whitelisted";
+                    if (data.exitCode === 2) msg = "Incorrect login or password";
+                    if (data.exitCode === 3) msg = "Invalid request format";
+                    if (data.exitCode === 4) msg = "Your account has been banned";
+                    alert("Sending failed: " + msg);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Server error");
+            });
+        }
+
+        function copyText(text, button) {
+            navigator.clipboard.writeText(text).then(() => {
+                const oldText = button.textContent;
+                button.textContent = "Copied!";
+                button.disabled = true;
+                setTimeout(() => {
+                    button.textContent = oldText;
+                    button.disabled = false;
+                }, 1200);
+            }).catch(err => {
+                console.error("Copy failed", err);
+                alert("Copy failed");
+            });
+        }
+
+        function updateChat() {
+            const userId = getCookie("id") || "";
+
+            fetch("/v0/api/get_chat_messages", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: userId })
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('maybe server is stopped');
+                return res.json();
+            })
+            .then(messages => {
+                chatDiv.innerHTML = '';
+                messages.forEach(msg => {
+                    const messageContainer = document.createElement('div');
+                    messageContainer.className = 'message-container';
+                    
+                    const messageBubble = document.createElement('div');
+                    messageBubble.className = 'message-bubble';
+                    if (!msg.verified) {
+                        messageBubble.classList.add('unverified');
+                    }
+                    
+                    const messageHeader = document.createElement('div');
+                    messageHeader.className = 'message-header';
+                    
+                    const userName = document.createElement('span');
+                    userName.className = 'user-name';
+                    userName.textContent = msg.user;
+                    
+                    const verifiedBadge = document.createElement('span');
+                    verifiedBadge.className = 'verified-badge';
+                    if (msg.verified) {
+                        verifiedBadge.textContent = 'official';
+                    }
+                    
+                    const messageTime = document.createElement('span');
+                    messageTime.className = 'message-time';
+                    messageTime.textContent = new Date(msg.time).toLocaleString();
+                    
+                    messageHeader.appendChild(userName);
+                    if (msg.verified) {
+                        messageHeader.appendChild(verifiedBadge);
+                    }
+                    messageHeader.appendChild(messageTime);
+                    
+                    const messageText = document.createElement('p');
+                    messageText.className = 'message-text';
+                    messageText.textContent = msg.message;
+                    
+                    const copyButton = document.createElement('button');
+                    copyButton.className = 'copy-button';
+                    copyButton.textContent = 'Copy';
+                    copyButton.onclick = () => copyText(msg.message, copyButton);
+                    
+                    messageBubble.appendChild(messageHeader);
+                    messageBubble.appendChild(messageText);
+                    
+                    messageContainer.appendChild(messageBubble);
+                    messageContainer.appendChild(copyButton);
+                    
+                    chatDiv.appendChild(messageContainer);
+                });
+                chatDiv.scrollTop = chatDiv.scrollHeight;
+            })
+            .catch(err => {
+                console.error(err);
+                chatDiv.innerHTML = '<p style="color: red;">Chat update error ' + err.message + '</p>';
+            });
+        }
+
+        // Poll chat every second
+        setInterval(updateChat, 1000);
+        updateChat();
+
+        // Send on Enter
+        input.addEventListener("keydown", e => {
+            if (e.key === "Enter") {
+                sendText();
+            }
+        });
+    </script>
+</body>
+</html>
