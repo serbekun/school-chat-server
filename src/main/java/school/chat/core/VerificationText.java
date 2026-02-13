@@ -22,6 +22,7 @@ public class VerificationText {
         this.mapper = new ObjectMapper();
         // Pretty print JSON for readability
         this.mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        LoadFromFile(); // Load existing data from file
     }
 
     // json that contain verification text
@@ -43,7 +44,11 @@ public class VerificationText {
     /**
      * Appends new verification text
      */
-    public void AppendVerificationText(String id, String login, String text) {
+    public synchronized void AppendVerificationText(String id, String login, String text) {
+        if (id == null || id.isBlank() || login == null || login.isBlank() || text == null) {
+            System.err.println("AppendVerificationText called with invalid parameters");
+            return;
+        }
         VerificationTextJson verificationTextJson = new VerificationTextJson(id, login, text);
         verificationTexts.add(verificationTextJson);
         SaveToFile();
@@ -52,9 +57,9 @@ public class VerificationText {
     /**
      * Removes a verificationTexts by its index (0-based). Throws exception if index is invalid.
      */
-    public void RemoveMessageByNumber(int number) {
+    public synchronized void RemoveMessageByNumber(int number) {
         if (number < 0 || number >= verificationTexts.size()) {
-            System.err.println("Out of bounds messages index");
+            System.err.println("Out of bounds verification text index: " + number + ", size: " + verificationTexts.size());
             return;
         }
         verificationTexts.remove(number);
@@ -64,7 +69,7 @@ public class VerificationText {
     /**
      * Loads messages from the JSON file into memory
      */
-    public void LoadFromFile() {
+    private synchronized void LoadFromFile() {
         File file = new File(verificationTextJsonFilePath);
         if (!file.exists() || file.length() == 0) {
             verificationTexts.clear();
@@ -74,7 +79,9 @@ public class VerificationText {
         try {
             List<VerificationTextJson> loaded = mapper.readValue(file, new TypeReference<List<VerificationTextJson>>() {});
             verificationTexts.clear();
-            verificationTexts.addAll(loaded);
+            if (loaded != null) {
+                verificationTexts.addAll(loaded);
+            }
         } catch (IOException e) {
             System.err.println("FAILED TO LOAD FILE: " + verificationTextJsonFilePath);
             e.printStackTrace();
@@ -85,7 +92,7 @@ public class VerificationText {
     /**
      * Saves current in-memory messages to the JSON file
      */
-    public void SaveToFile() {
+    private synchronized void SaveToFile() {
         try {
             // Ensure parent directories exist
             File file = new File(verificationTextJsonFilePath);
@@ -95,14 +102,14 @@ public class VerificationText {
 
             mapper.writeValue(file, verificationTexts);
         } catch (IOException e) {
-            System.err.println("Failed to save chat messages to file: " + e.getMessage());
+            System.err.println("Failed to save verification text to file: " + e.getMessage());
         }
     }
 
     /**
      * delete all verifications text
      */
-    public void Clear() {
+    public synchronized void Clear() {
         verificationTexts.clear();
         SaveToFile();
     }
@@ -110,7 +117,7 @@ public class VerificationText {
     /**
      * Returns an unmodifiable view of the current chat messages
      */
-    public List<VerificationTextJson> GetVerificationTexts() {
+    public synchronized List<VerificationTextJson> GetVerificationTexts() {
         return List.copyOf(verificationTexts); // immutable copy for safety
     }
 }

@@ -70,7 +70,11 @@ public class Chat {
     /**
      * Appends a new message to the chat
      */
-    public void AppendToChat(String login, String message, boolean verified) {
+    public synchronized void AppendToChat(String login, String message, boolean verified) {
+        if (login == null || login.isBlank() || message == null) {
+            System.err.println("AppendToChat called with invalid parameters");
+            return;
+        }
         ChatMessage newMessage = new ChatMessage(login, message, verified);
         messages.add(newMessage);
         SaveToFile();
@@ -84,9 +88,9 @@ public class Chat {
     /**
      * Removes a message by its index (0-based). Throws exception if index is invalid.
      */
-    public void RemoveMessageByNumber(int number) {
+    public synchronized void RemoveMessageByNumber(int number) {
         if (number < 0 || number >= messages.size()) {
-            System.err.println("Out of bounds messages index");
+            System.err.println("Out of bounds messages index: " + number);
             return;
         }
         messages.remove(number);
@@ -96,20 +100,20 @@ public class Chat {
     /**
      * Returns an unmodifiable view of the current chat messages
      */
-    public List<ChatMessage> GetChatMessage() {
+    public synchronized List<ChatMessage> GetChatMessage() {
         return List.copyOf(messages); // immutable copy for safety
     }
 
     /**
      * Return json String of messages
      */
-    public String GetChatMessageJsonString() {
+    public synchronized String GetChatMessageJsonString() {
         try {
             String result = objectMapper.writeValueAsString(messages);
             return result;
         } catch (IOException e) {
             System.err.println("Error make json string from messages object" + e.getMessage());
-            return "{}";
+            return "[]";
         }
     }
 
@@ -121,7 +125,7 @@ public class Chat {
     /**
      * Clears all messages from cache and file
      */
-    public void ClearChat() {
+    public synchronized void ClearChat() {
         messages.clear();
         SaveToFile(); // ensure file is also cleared
     }

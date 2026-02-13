@@ -33,10 +33,14 @@ public class Whitelist {
 
     /**
      * Method for add id to server whitelist
-     * 
+     *
      * @param id id what you want to add whitelist
      */
-    public void addId(String id) {
+    public synchronized void addId(String id) {
+        if (id == null || id.isBlank()) {
+            System.err.println("addId called with null or blank id");
+            return;
+        }
         try {
             WhitelistIds data;
 
@@ -73,16 +77,20 @@ public class Whitelist {
             );
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed to update whitelist", e);
+            System.err.println("Failed to update whitelist: " + e.getMessage());
         }
     }
 
     /**
      * Method for remove if from whitelist
-     * 
+     *
      * @param id id what you want to remove
      */
-    public void removeId(String id) {
+    public synchronized void removeId(String id) {
+        if (id == null || id.isBlank()) {
+            System.err.println("removeId called with null or blank id");
+            return;
+        }
         try {
             WhitelistIds data;
 
@@ -117,16 +125,19 @@ public class Whitelist {
             );
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed to update whitelist", e);
+            System.err.println("Failed to update whitelist: " + e.getMessage());
         }
     }
 
     /**
-     * 
+     *
      * @param id what you want to check contain in whitelist
      * @return true if id contain in whitelist. false if not contain in whitelist
      */
-    public boolean ContainsId(String id) {
+    public synchronized boolean ContainsId(String id) {
+        if (id == null || id.isBlank()) {
+            return false;
+        }
         try {
             WhitelistIds data;
 
@@ -148,7 +159,8 @@ public class Whitelist {
             return data.ids.contains(id);
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read whitelist", e);
+            System.err.println("Failed to read whitelist: " + e.getMessage());
+            return false;
         }
     }
 

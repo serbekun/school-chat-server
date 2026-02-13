@@ -42,6 +42,7 @@ public class ProhibitedLogins {
             return false;
         }
         prohibitedLogin.add(login);
+        SaveToFile();
         return true;
     }
 
@@ -53,14 +54,11 @@ public class ProhibitedLogins {
      * @return true if login removed false if login doesn't exist
      */
     public boolean RemoveProhibitedLoginByLogin(String login) {
-        
         if (!prohibitedLogin.contains(login)) {
             return false;
         }
-
-        int index = prohibitedLogin.indexOf(login);
-        prohibitedLogin.remove(index);
-
+        prohibitedLogin.remove(login);
+        SaveToFile();
         return true;
     }
 
@@ -72,11 +70,12 @@ public class ProhibitedLogins {
      * @return true if login removed, false if login didn't exist
      */
     public boolean RemoveProhibitedLoginByIndex(int index) {
-        if (prohibitedLogin.size() < index) {
+        if (index < 0 || index >= prohibitedLogin.size()) {
             return false;
         }
 
         prohibitedLogin.remove(index);
+        SaveToFile();
         return true;
     }
 

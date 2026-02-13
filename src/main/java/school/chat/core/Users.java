@@ -11,39 +11,51 @@ import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.HashMap;
 
+
 /**
  * Class Users manage chat users and save to file
- */
+*/
 public class Users {
     /**
      * Users data json database file path
-     */ 
+    */ 
     private final String usersSaveFilePath;
-
+    
     /**
      * Jackson ObjectMapper object;
      */
     private final ObjectMapper mapper;
-
+    
     /**
      * Data about users for cash on memory for speed
-     */
-    private Map<String, User> usersByLogin; // Key: login, Value: User
+    */
+   private Map<String, User> usersByLogin; // Key: login, Value: User
 
-    public Users(String usersSaveFilePath) {
+   public Users(String usersSaveFilePath) {
         this.usersSaveFilePath = usersSaveFilePath;
         this.mapper = new ObjectMapper();
         this.usersByLogin = new HashMap<>();
         loadFromDisk(false);
     }
+    
+    // Simple SHA‑256 hash helper – not for production use, but sufficient for this example
+    private static String hashPassword(String plain) {
+        try {
+            java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
+            byte[] encoded = digest.digest(plain.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            return java.util.Base64.getEncoder().encodeToString(encoded);
+        } catch (Exception e) {
+            throw new RuntimeException("Password hashing failed", e);
+        }
+    }
 
     // Inner User class with JSON field name mappings
     public static class User {
         public String id;
-
+        
         @JsonProperty("password_hash")
         public String password;
-
+        
         public boolean verified;
         public int degreeOfAccess;
         public boolean banned;
@@ -82,7 +94,7 @@ public class Users {
             return false; // Duplicate login
         }
 
-        User newUser = new User(login, password, verified, degreeOfAccess, id, false);
+        User newUser = new User(login, hashPassword(password), verified, degreeOfAccess, id, false);
         usersByLogin.put(login, newUser);
         return saveToDisk();
     }
@@ -117,6 +129,10 @@ public class Users {
     }
 
     public synchronized boolean isUserVerified(String login) {
+        if (login == null || login.isBlank()) {
+            System.err.println("isUserVerified called with null or blank login");
+            return false;
+        }
         User user = usersByLogin.get(login);
         return user.verified;
     }
@@ -125,31 +141,44 @@ public class Users {
      * Check if login and password match
      */
     public synchronized boolean checkUser(String login, String password) {
+        if (login == null || login.isBlank() || password == null) {
+            System.err.println("checkUser called with null input");
+            return false;
+        }
         if (isUserBanned(login)) {
             return false;
         }
+        // Compare hashed passwords
         User user = usersByLogin.get(login);
-        return user != null && password.equals(user.password);
+        return user != null && hashPassword(password).equals(user.password);
     }
 
     /**
      * Checks if a user exists with the given login, password, and ID, and is verified.
      */
     public synchronized boolean checkUserVerified(String login, String password, String id) {
+        if (login == null || login.isBlank() || password == null || id == null) {
+            System.err.println("checkUserVerified called with null input");
+            return false;
+        }
         if (isUserBanned(login)) {
             return false;
         }
         User user = usersByLogin.get(login);
         return user != null &&
-               password.equals(user.password) &&
-               id.equals(user.id) &&
-               user.verified;
+            hashPassword(password).equals(user.password) &&
+            id.equals(user.id) &&
+            user.verified;
     }
 
     /**
      * Returns the degree of access for a user.
      */
     public synchronized int getUserDegreeOfAccess(String login) {
+        if (login == null || login.isBlank()) {
+            System.err.println("getUserDegreeOfAccess called with null or blank login");
+            return -1;
+        }
         if (isUserBanned(login)) {
             return -1;
         }
@@ -220,8 +249,15 @@ public class Users {
      * ban user by login
      */
     public synchronized void BanUser(String login) {
+        if (login == null || login.isBlank()) {
+            System.err.println("BanUser called with null or blank login");
+            return;
+        }
         User user = usersByLogin.get(login);
-        if (user == null) return;
+        if (user == null) {
+            System.err.println("User not found: " + login);
+            return;
+        }
 
         user.banned = true;
         saveToDisk();
@@ -231,8 +267,15 @@ public class Users {
      * un ban user by login
      */
     public synchronized void unBanUser(String login) {
+        if (login == null || login.isBlank()) {
+            System.err.println("unBanUser called with null or blank login");
+            return;
+        }
         User user = usersByLogin.get(login);
-        if (user == null) return;
+        if (user == null) {
+            System.err.println("User not found: " + login);
+            return;
+        }
 
         user.banned = false;
         saveToDisk();
@@ -242,8 +285,15 @@ public class Users {
      * verify user by login
      */
     public synchronized void VerifyUser(String login) {
+        if (login == null || login.isBlank()) {
+            System.err.println("VerifyUser called with null or blank login");
+            return;
+        }
         User user = usersByLogin.get(login);
-        if (user == null) return;
+        if (user == null) {
+            System.err.println("User not found: " + login);
+            return;
+        }
 
         user.verified = true;
         saveToDisk();
@@ -253,8 +303,15 @@ public class Users {
      * un verify user by login
      */
     public synchronized void UnVerifyUser(String login) {
+        if (login == null || login.isBlank()) {
+            System.err.println("UnVerifyUser called with null or blank login");
+            return;
+        }
         User user = usersByLogin.get(login);
-        if (user == null) return;
+        if (user == null) {
+            System.err.println("User not found: " + login);
+            return;
+        }
 
         user.verified = false;
         saveToDisk();
