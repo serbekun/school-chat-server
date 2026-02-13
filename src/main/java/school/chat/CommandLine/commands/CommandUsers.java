@@ -64,7 +64,7 @@ public class CommandUsers {
             System.out.println("login    : " + entry.getKey());
             System.out.println("id       : " + u.id);
             System.out.println("verified : " + u.verified);
-            System.out.println("banned   : " + u.verified);
+            System.out.println("banned   : " + u.banned);
             System.out.println("access   : " + u.degreeOfAccess);
 
         }
