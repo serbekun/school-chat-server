@@ -32,13 +32,13 @@ public class ApiHandles {
     }
 
     public void InitApiHandles(Javalin svr) {
-        // get post
+        // REST-style API routes
         svr.get("/v0/api/health", ctx -> new Health().Run(ctx));
-        svr.get("/v0/api/get_id", ctx -> new GetId().Run(ctx, idService, getAddFreeWhitelist.getAsBoolean()));
-        svr.post("/v0/api/create_user", ctx -> new CreateUser().Run(ctx, userService, getWhitelistMode.getAsBoolean()));
-        svr.post("/v0/api/send_chat_message", ctx -> new SendChatMessages().Run(ctx, chatService, getWhitelistMode.getAsBoolean()));
-        svr.post("/v0/api/get_chat_messages", ctx -> new GetChatMessages().Run(ctx, chatService, getWhitelistMode.getAsBoolean()));
-        svr.post("/v0/api/send_verification_text", ctx -> new SendVerificationText().Run(ctx, chatService, getWhitelistMode.getAsBoolean()));
+        svr.post("/v0/api/ids", ctx -> new GetId().Run(ctx, idService, getAddFreeWhitelist.getAsBoolean()));
+        svr.post("/v0/api/users", ctx -> new CreateUser().Run(ctx, userService, getWhitelistMode.getAsBoolean()));
+        svr.post("/v0/api/messages", ctx -> new SendChatMessages().Run(ctx, chatService, getWhitelistMode.getAsBoolean()));
+        svr.get("/v0/api/messages", ctx -> new GetChatMessages().Run(ctx, chatService, getWhitelistMode.getAsBoolean()));
+        svr.post("/v0/api/verification-texts", ctx -> new SendVerificationText().Run(ctx, chatService, getWhitelistMode.getAsBoolean()));
     }
 
 }

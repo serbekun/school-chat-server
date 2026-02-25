@@ -7,7 +7,7 @@ import school.chat.services.UserService;
 import school.chat.services.dto.CreateUserServiceResponse;
 
 /**
- * <p>Handles the POST request to the <code>/v0/api/create_user</code> endpoint.</p>
+ * <p>Handles the POST request to the <code>/v0/api/users</code> endpoint.</p>
  *
  * <p>Creates a new user account in the system.</p>
  *

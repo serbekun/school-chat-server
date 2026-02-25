@@ -5,7 +5,7 @@ import school.chat.http_server.handlers.ApiHandlers.dto.IdResponse;
 import school.chat.services.IdService;
 
 /**
- * <p>Handles the request to generate a new token/ID (typically GET <code>/v0/api/get_id</code>).</p>
+ * <p>Handles the request to generate a new token/ID (POST <code>/v0/api/ids</code>).</p>
  *
  * <p>Generates a new unique token and optionally adds it to the whitelist immediately.</p>
  *

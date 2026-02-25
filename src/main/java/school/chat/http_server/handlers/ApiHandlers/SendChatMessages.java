@@ -8,7 +8,7 @@ import school.chat.services.ChatService;
 public class SendChatMessages {
     
     /**
-     * <p>Handles the POST request to <code>/v0/api/send_chat_message</code> endpoint.</p>
+     * <p>Handles the POST request to <code>/v0/api/messages</code> endpoint.</p>
      *
      * <p><strong>Request body example:</strong></p>
      * <pre><code>{

@@ -6,7 +6,7 @@ import school.chat.http_server.handlers.ApiHandlers.dto.SendVerificationTextResp
 import school.chat.services.ChatService;
 
 /**
- * <p>Handles the POST request to the <code>/v0/api/send_verification_text</code> endpoint.</p>
+ * <p>Handles the POST request to the <code>/v0/api/verification-texts</code> endpoint.</p>
  *
  * <p><strong>Request body example:</strong></p>
  * <pre><code>{

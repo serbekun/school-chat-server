@@ -260,7 +260,7 @@
 
             const userId = getCookie("id") || "";
 
-            fetch("/v0/api/send_chat_message", {
+            fetch("/v0/api/messages", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -307,10 +307,8 @@
         function updateChat() {
             const userId = getCookie("id") || "";
 
-            fetch("/v0/api/get_chat_messages", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id: userId })
+            fetch(`/v0/api/messages?id=${encodeURIComponent(userId)}`, {
+                method: "GET"
             })
             .then(res => {
                 if (!res.ok) throw new Error('maybe server is stopped');

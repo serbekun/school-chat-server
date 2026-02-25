@@ -6,14 +6,11 @@ import school.chat.http_server.handlers.ApiHandlers.dto.GetChatMessagesRequest;
 import school.chat.services.ChatService;
 
 /**
- * <p>Handles the POST request to the <code>/v0/api/get_chat_messages</code> endpoint.</p>
+ * <p>Handles the GET request to the <code>/v0/api/messages</code> endpoint.</p>
  *
  * <p>Returns the current chat state as a JSON array of messages.</p>
  *
- * <p><strong>Request body example:</strong></p>
- * <pre><code>{
- *   "id": "a1b2c3d4e5f6g7h8i9j0"
- * }</code></pre>
+ * <p><strong>Query parameter:</strong> <code>?id=a1b2c3d4e5f6g7h8i9j0</code></p>
  *
  * <p><strong>Possible responses:</strong></p>
  * <ul>
@@ -33,7 +30,8 @@ import school.chat.services.ChatService;
 public class GetChatMessages {
     public void Run(Context ctx, ChatService chatService, boolean whitelistMode) {
 
-    GetChatMessagesRequest req = ctx.bodyAsClass(GetChatMessagesRequest.class);
+    GetChatMessagesRequest req = new GetChatMessagesRequest();
+    req.id = ctx.queryParam("id");
 
     school.chat.services.dto.GetChatMessagesRequest serviceReq = new school.chat.services.dto.GetChatMessagesRequest(req.id);
     String result = chatService.GetChatMessages(serviceReq, whitelistMode);

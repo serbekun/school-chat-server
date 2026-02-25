@@ -117,14 +117,15 @@
 
         async function getId() {
             try {
-                const response = await fetch(`${apiBase}/get_id`);
+                const response = await fetch(`${apiBase}/ids`, {
+                    method: 'POST'
+                });
                 const data = await response.json();
-                if (data.success) {
+                if (data.id) {
                     setCookie('id', data.id);
                     return data.id;
-                } else {
-                    throw new Error('Failed to get ID');
                 }
+                throw new Error('Failed to get ID');
             } catch (error) {
                 console.error('Error getting ID:', error);
                 return null;
@@ -150,7 +151,7 @@
             }
 
             try {
-                const response = await fetch(`${apiBase}/create_user`, {
+                const response = await fetch(`${apiBase}/users`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
