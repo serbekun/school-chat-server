@@ -376,9 +376,16 @@
             });
         }
 
-        // Poll chat every second
-        setInterval(updateChat, 1000);
+        // Poll chat with random interval (3-7 seconds)
+        function scheduleNextUpdate() {
+            const delay = (Math.floor(Math.random() * 5) + 3) * 1000; // 3-7 seconds
+            setTimeout(() => {
+                updateChat();
+                scheduleNextUpdate();
+            }, delay);
+        }
         updateChat();
+        scheduleNextUpdate();
 
         // Send on Enter
         input.addEventListener("keydown", e => {
