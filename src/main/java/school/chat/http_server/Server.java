@@ -66,7 +66,7 @@ public class Server {
             return 1;
         }
         try {
-            svr.start();
+            svr.start(port);
             System.out.println("server started successfully");
         } catch (Exception e) {
             System.err.println("Error starting server: " + e.getMessage());
