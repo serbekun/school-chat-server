@@ -2,7 +2,6 @@ package school.chat;
 
 import java.io.File;
 import io.javalin.Javalin;
-import io.javalin.community.ssl.SslPlugin;
 
 import school.chat.CommandLine.CommandLine;
 // import core
@@ -46,37 +45,7 @@ public class Main {
             // init objects
             Config svr_config = new Config();
 
-            Javalin svr = Javalin.create(config -> {
-                config.registerPlugin(new SslPlugin(ssl -> {
-                    // Load PEM certificates
-                    try {
-                        ssl.pemFromPath("keys/fullchain.pem", "keys/privkey.pem");
-
-                    } catch (Exception e) {
-                        System.err.println("[main] Error could not find keys files in 'keys/fullchain.pem & 'keys/privkey.pem'");
-                        System.err.println("# create a new private key and self-signed certificate (valid 1 year)");
-                        System.err.println("openssl req -x509 -newkey rsa:4096 -nodes \\");
-                        System.err.println("  -keyout server.key -out server.crt -days 365 \\");
-                        System.err.println("  -subj \"/CN=localhost\"");
-                        System.err.println();
-                        System.err.println("# create a PKCS#12 keystore from key+cert (password: changeit)");
-                        System.err.println("openssl pkcs12 -export -out keys/keystore.p12 \\");
-                        System.err.println("  -inkey server.key -in server.crt -name schoolchat -passout pass:changeit");
-                        System.err.println();
-                        System.err.println("# secure the key files (optional)");
-                        System.err.println("chmod 600 keys/keystore.p12");
-                    }
-                    
-                    // Configure HTTPS only
-                    ssl.secure = true;
-                    ssl.securePort = svr_config.getPort();
-                    ssl.insecure = false;
-                    
-                    // HTTP/2 support
-                    ssl.http2 = true;
-                    ssl.sniHostCheck = false;
-                }));
-            });
+            Javalin svr = Javalin.create();
 
             // init core
             Chat chat = new Chat(svr_config.filePath.getChatMessagesSaveFilePath());

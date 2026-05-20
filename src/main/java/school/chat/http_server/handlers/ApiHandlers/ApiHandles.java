@@ -32,7 +32,6 @@ public class ApiHandles {
     }
 
     public void InitApiHandles(Javalin svr) {
-        // REST-style API routes
         svr.get("/v0/api/health", ctx -> new Health().Run(ctx));
         svr.post("/v0/api/ids", ctx -> new GetId().Run(ctx, idService, getAddFreeWhitelist.getAsBoolean()));
         svr.post("/v0/api/users", ctx -> new CreateUser().Run(ctx, userService, getWhitelistMode.getAsBoolean()));
